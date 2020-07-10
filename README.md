@@ -180,7 +180,7 @@ plt.show()
 ```
 
 In addition to the posterior mean (returned by the `predict` method) we can
-plot the credible intervals by returing the standard deviation of the
+plot the credible intervals by returning the standard deviation of the
 prediction
 ```
 post_mean, post_std = mdl.predict(x.reshape(-1,1), return_std=True)
