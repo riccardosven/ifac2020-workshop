@@ -77,7 +77,7 @@ are the hyperparameters.
 We can now implement the kernel-based estimation with
 ```
 K = stable_spline([10, 0.9])
-g_ker = K@U.T@np.linalg.solve(U@K@U.T + np.eye(N), y)
+g_ker = K @ U.T @ np.linalg.solve(U @ K @ U.T + np.eye(N), y)
 ```
 Were we have set the hyperparameters arbitrarily.
 
@@ -104,7 +104,7 @@ hypers = sol.x
 
 
 K_opt = stable_spline(hypers[:2])
-g_opt = K_opt@U.T@np.linalg.solve(U@K_opt@U.T + hypers[2]*np.eye(N), y)
+g_opt = K_opt @ U.T @ np.linalg.solve(U @ K_opt @ U.T + hypers[2]*np.eye(N), y)
 ```
 
 *WARNING: this optimization may take a while!*
@@ -154,7 +154,8 @@ mdl = gp.GaussianProcessRegressor(kernel=kernel)
 ```
 
 We can draw some realizations from these kernels (effectively: the priors) to
-see the possible functions they represent
+see the possible functions they represent (note that the `fit` method expects
+the input locations by columns)
 ```
 for i, ker in enumerate([K_linear, K_quadratic, K_gauss, K_laplace]):
 	ax = plt.subplot("22"+str(i+1))
@@ -189,6 +190,15 @@ plt.plot(x, post_mean, label="Posterior mean")
 plt.fill_between(x, post_mean - 3*post_std, post_mean+ 3*post_std, color="gray", alpha=0.5)
 plt.show()
 ```
+
+You can access the learned kernel, the parameters of the kernel, and the value
+of the marginal likelihood of the model:
+```
+print("Kernel: {}".format(mdl.kernel_))
+print("Parameters: {}".format(mdl.kernel_.theta))
+print("Log-likelihood: {}".format(mdl.log_marginal_likelihood(mdl.kernel_.theta)))
+```
+
 
 ### Introduce noise
 The previous model was an interpolation model (no noise). Introduce some noise
@@ -228,4 +238,67 @@ plt.fill_between(x, post_mean - 3*post_std, post_mean+ 3*post_std, color="gray",
 plt.legend()
 plt.show()
 ```
+
+# Phase 3: Kernel design
+In this phase we look at kernel design and the importance of the kernel for
+successful estimation.
+
+Start by loading the data
+```
+from workshop.phase3 import load_data
+x,y = load_data()
+```
+Plot the data to get an understanding of the process!
+```
+plt.plot(x, y)
+plt.xlabel("Year")
+plt.ylabel("CO2")
+plt.title("Mauna Lua")
+plt.legend()
+plt.show()
+```
+
+
+### Overall trend
+
+Start with a simple kernel with noise:
+```
+K_gaussian = gp.kernels.RBF()
+K_noise = gp.kernels.WhiteKernel()
+```
+
+Fit the model:
+```
+mdl = GaussianProcessRegressor(kernel = K_gaussian + K_noise, normalize_y=True)
+mdl.fit(x.reshape(-1,1), y)
+
+y_hat = mdl.predict(x.reshape(-1, 1))
+```
+
+*In this case, the marginal likelihood has two local optima. Try and find them
+by initializing the RBF kernel with different length scales!*
+
+Try also with polynomial kernels
+```
+K_linear = gp.kernel.DotProduct()
+K_quadratic = K_linear**2
+K_cubic = K_linear**3
+```
+and kernels that allow for changes of trend
+```
+K_rational = gp.kernel.RationalQuadratic()
+```
+
+### Seasonality
+The data has a strong seasonal component. Augment the kernel with a seasonal
+component (experiment with different values for the `length_scale` parameter to find a good
+local solution):
+```
+K_seasonal = gp.kernels.ExpSineSquared(length_scale=1.0)
+```
+
+Try multplying the parts with RBF kernels to increase the overall smoothness.
+
+### Experiment!
+Can you build a model that can predict the CO2 five years ahead?
 

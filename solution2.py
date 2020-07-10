@@ -52,6 +52,10 @@ for i, ker in enumerate([K_linear, K_quadratic, K_gauss, K_laplace]):
 plt.legend()
 plt.show()
 
+print("Kernel: {}".format(mdl.kernel_))
+print("Parameters: {}".format(mdl.kernel_.theta))
+print("Log-likelihood: {}".format(mdl.log_marginal_likelihood(mdl.kernel_.theta)))
+
 
 # Show credible interval
 mdl = gp.GaussianProcessRegressor(kernel=K_laplace)
