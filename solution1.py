@@ -25,6 +25,7 @@ plt.plot(g_ls, label="least-squares")
 plt.title("Linear system")
 plt.xlabel("lag")
 plt.ylabel("impulse response")
+plt.legend()
 plt.show()
 
 # Define stable-spline kernel
@@ -44,6 +45,7 @@ plt.plot(g_ker, label="kernel")
 plt.title("Linear system")
 plt.xlabel("lag")
 plt.ylabel("impulse response")
+plt.legend()
 plt.show()
 
 
@@ -68,11 +70,12 @@ plt.plot(g_opt, label="marg-lik")
 plt.title("Linear system")
 plt.xlabel("lag")
 plt.ylabel("impulse response")
+plt.legend()
 plt.show()
 
 # Print measures of fit
 from workshop.utils import fit
 
-print(" LS: " + str(fit(g_ls, g_0)))
-print("Ker: " + str(fit(g_ker, g_0)))
-print("Opt: " + str(fit(g_opt, g_0)))
+print(" LS: {}".format(fit(g_ls, g_0)))
+print("Ker: {}".format(fit(g_ker, g_0)))
+print("Opt: {}".format(fit(g_opt, g_0)))

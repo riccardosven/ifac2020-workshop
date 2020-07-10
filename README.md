@@ -115,9 +115,9 @@ the estimate):
 
 ```
 from workshop.utils import fit
-print(" LS: " + str(fit(g_ls, g_0)))
-print("Ker: " + str(fit(g_ker, g_0)))
-print("Opt: " + str(fit(g_opt, g_0)))
+print(" LS: {}".format(fit(g_ls, g_0)))
+print("Ker: {}".format(fit(g_ker, g_0)))
+print("Opt: {}".format(fit(g_opt, g_0)))
 ```
 
 # Phase 2: Gaussian process models in sklearn
