@@ -34,6 +34,13 @@ N = len(u)
 The `u` variable now contains the input signal, the `y` variable contains the
 output signal. (The system itself is a high-order linear dynamical system.)
 
+The system to be estimated is a LTI system with impulse response `g`:
+```
+y = U g
+```
+where `U` is the *regression matrix* (the Toeplitz matrix of the input signal)
+
+
 ### Try linear regression
 Create the toeplitz matrix of the input
 ```
@@ -66,7 +73,6 @@ plt.show()
 ### Define the stable-spline kernel
 We will use the first-order stable-spline kernel
 ```
-
 def stable_spline(theta):
     row = np.arange(n)[np.newaxis]
     return theta[0] * theta[1] ** np.maximum(row, row.T)
