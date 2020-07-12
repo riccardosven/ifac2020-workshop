@@ -1,5 +1,5 @@
 import numpy as np
-import scipy
+from scipy.linalg import toeplitz
 
 true_system = np.asarray(
     [
@@ -211,7 +211,7 @@ def load_data():
     "Loads the data for the simulation example"
     np.random.seed(1337)
     u = np.random.randn(400)
-    U = scipy.linalg.toeplitz(u, np.zeros_like(true_system))
+    U = toeplitz(u, np.zeros_like(true_system))
     e = 1.5 * np.random.randn(400)
     y = U @ true_system + e
     return u, y
